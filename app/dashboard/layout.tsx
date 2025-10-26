@@ -1,11 +1,12 @@
 import { ReactNode } from 'react';
-import { DashboardNavigation } from '../components/dashboard/DashboardNavigation';
+import { DasboardNavigation } from '../components/dashboard/DasboardNavigation';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { CircleUser, MenuIcon } from 'lucide-react';
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+// import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import {
+  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -25,10 +26,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <div className="flex w-full flex-col mccccccccccccax-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex w-full flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <header className="sticky top-0 flex  h-16 items-center justify-between gap-4 border-b border-gray-200 bg-white">
         <nav className="hidden font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-          <DashboardNavigation />
+          <DasboardNavigation />
         </nav>
 
         <Sheet>
@@ -40,7 +41,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
           <SheetContent side="left">
             <nav className="flex flex-col gap-5 text-lg font-base mt-5">
-              <DashboardNavigation />
+              <DasboardNavigation />
             </nav>
           </SheetContent>
         </Sheet>
@@ -61,6 +62,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
+
       <main className="my-5">{children}</main>
     </div>
   );

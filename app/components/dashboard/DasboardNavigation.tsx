@@ -19,7 +19,7 @@ const links = [
   },
 ];
 
-export function DashboardNavigation() {
+export function DasboardNavigation() {
   return (
     <>
       {links.map((link) => (
