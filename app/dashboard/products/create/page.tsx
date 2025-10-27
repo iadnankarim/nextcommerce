@@ -1,3 +1,6 @@
+'use client';
+
+import { UploadDropzone } from '@/app/lib/uploadthing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -71,6 +74,19 @@ export default function ProductCreateRoute() {
                   <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Label>Images</Label>
+              <UploadDropzone
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  alert('Finished uploading');
+                }}
+                onUploadError={() => {
+                  alert('Something went wrong');
+                }}
+              />
             </div>
           </div>
         </CardContent>
