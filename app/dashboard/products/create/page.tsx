@@ -30,6 +30,7 @@ import { parseWithZod } from '@conform-to/zod';
 import { productSchema } from '@/app/lib/zodSchemas';
 import { useState, useActionState } from 'react';
 import Image from 'next/image';
+import { categories } from '@/app/lib/categories';
 
 export default function ProductCreateRoute() {
   const [images, setImages] = useState<string[]>([]);
@@ -142,8 +143,37 @@ export default function ProductCreateRoute() {
               <p className="text-red-300">{fields.status.errors}</p>
             </div>
 
+            {/* Category */}
+            <div className="flex flex-col gap-3">
+              <Label>Category</Label>
+              <Select
+                key={fields.category.key}
+                name={fields.category.name}
+                defaultValue={fields.category.initialValue}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.name}>
+                      {category.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-red-300">{fields.category.errors}</p>
+            </div>
+
             <div className="flex flex-col gap-3">
               <Label>Images</Label>
+              <input
+                type="hidden"
+                value={images}
+                key={fields.images.key}
+                name={fields.images.name}
+                defaultValue={fields.images.initialValue as any}
+              />
               {images.length > 0 ? (
                 <div className="flex gap-5">
                   {images.map((images, index) => (
@@ -177,6 +207,8 @@ export default function ProductCreateRoute() {
                   }}
                 />
               )}
+
+              <p className="text-red-300">{fields.images.errors}</p>
             </div>
           </div>
         </CardContent>
