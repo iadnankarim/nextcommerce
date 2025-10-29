@@ -107,6 +107,13 @@ export default function ProductCreateRoute() {
                 defaultValue={fields.price.initialValue}
                 type="number"
                 placeholder="$555"
+                min={1}
+                step={1}
+                inputMode="numeric"
+                onWheel={(e) => e.currentTarget.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+                }}
               />
 
               <p className="text-red-300">{fields.price.errors}</p>
@@ -216,7 +223,7 @@ export default function ProductCreateRoute() {
 
         <CardFooter>
           {/* <Button>Create product</Button> */}
-          <SubmitButton />
+          <SubmitButton text="Create Product" />
         </CardFooter>
       </Card>
     </form>

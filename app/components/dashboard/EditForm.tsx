@@ -1,5 +1,5 @@
 'use client';
-import { createProduct, editProduct } from '@/app/actions';
+import { editProduct } from '@/app/actions';
 import { UploadDropzone } from '@/app/lib/uploadthing';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, Database, XIcon } from 'lucide-react';
+import { ChevronLeft, XIcon } from 'lucide-react';
 import Link from 'next/link';
 // import { useFormState } from 'react-dom';
 import { parseWithZod } from '@conform-to/zod';
@@ -80,12 +80,10 @@ export function EditForm({ data }: iAppProps) {
         <h1 className="text-xl font-medium tracking-tight">Edit Product</h1>
       </div>
 
-      {/* 10:45:23 */}
-
       <Card className="mt-5">
         <CardHeader>
           <CardTitle>Product Details</CardTitle>
-          <CardDescription>in this form you can create your product</CardDescription>
+          <CardDescription>in this form you can update your product</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -124,6 +122,13 @@ export function EditForm({ data }: iAppProps) {
                 defaultValue={data.price}
                 type="number"
                 placeholder="$555"
+                min={1}
+                step={1}
+                inputMode="numeric"
+                onWheel={(e) => e.currentTarget.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+                }}
               />
 
               <p className="text-red-300">{fields.price.errors}</p>
@@ -134,7 +139,7 @@ export function EditForm({ data }: iAppProps) {
               <Switch
                 key={fields.isFeatured.key}
                 name={fields.isFeatured.name}
-                checked={data.isFeatured}
+                defaultChecked={data.isFeatured}
               />
 
               <p className="text-red-300">{fields.isFeatured.errors}</p>
@@ -186,7 +191,6 @@ export function EditForm({ data }: iAppProps) {
                 value={images}
                 key={fields.images.key}
                 name={fields.images.name}
-                defaultValue={fields.images.initialValue as any}
               />
               {images.length > 0 ? (
                 <div className="flex gap-5">
@@ -229,7 +233,7 @@ export function EditForm({ data }: iAppProps) {
 
         <CardFooter>
           {/* <Button>Create product</Button> */}
-          <SubmitButton />
+          <SubmitButton text="Edit Product" />
         </CardFooter>
       </Card>
     </form>

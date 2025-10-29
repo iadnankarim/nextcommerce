@@ -56,6 +56,7 @@ export default async function ProductsRoute() {
               <TableRow>
                 <TableHead>Image</TableHead>
                 <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead> {/* 👈 Add this */}
                 <TableHead>Status</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Date</TableHead>
@@ -74,8 +75,9 @@ export default async function ProductsRoute() {
                       className="rounded-md object-cover h-16 w-16"
                     />
                   </TableCell>
-
                   <TableCell>{item.name}</TableCell>
+                  <TableCell className="max-w-[250px] truncate">{item.description}</TableCell>{' '}
+                  {/* 👈 Add this */}
                   <TableCell>{item.status}</TableCell>
                   <TableCell>${item.price}</TableCell>
                   <TableCell>{new Intl.DateTimeFormat('en-US').format(item.createdAt)}</TableCell>
@@ -94,7 +96,9 @@ export default async function ProductsRoute() {
                         <DropdownMenuItem>
                           <Link href={`/dashboard/products/${item.id}`}>Edit</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/products/${item.id}/delete`}>Delete</Link>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
