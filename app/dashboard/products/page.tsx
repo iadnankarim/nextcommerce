@@ -82,25 +82,7 @@ export default async function ProductsRoute() {
                   <TableCell>${item.price}</TableCell>
                   <TableCell>{new Intl.DateTimeFormat('en-US').format(item.createdAt)}</TableCell>
                   <TableCell className="text-end">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon" variant="ghost">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Link href={`/dashboard/products/${item.id}`}>Edit</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/products/${item.id}/delete`}>Delete</Link>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                   c
                   </TableCell>
                 </TableRow>
               ))}
