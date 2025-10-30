@@ -1,7 +1,21 @@
+import { CategorySelectio } from '../components/storefront/CategorySelection';
+import Hero from '../components/storefront/Hero';
+
 export default function IndexPage() {
   return (
     <div>
-      <h1>Hello from the storeFront page.tsx</h1>
+      <Hero />
+      <CategorySelectio />
     </div>
   );
 }
+
+// import { Hero } from '../components/storefront/Hero';
+
+// export default function IndexPage() {
+//   return (
+//     <div>
+//       <Hero />
+//     </div>
+//   );
+// }
