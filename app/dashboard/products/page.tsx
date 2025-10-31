@@ -63,7 +63,7 @@ export default async function ProductsRoute() {
                 <TableHead className="text-end">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            {/* <TableBody>
               {data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
@@ -77,12 +77,48 @@ export default async function ProductsRoute() {
                   </TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell className="max-w-[250px] truncate">{item.description}</TableCell>{' '}
-                  {/* 👈 Add this */}
+                  <TableCell>{item.status}</TableCell>
+                  <TableCell>${item.price}</TableCell>
+                  <TableCell>{new Intl.DateTimeFormat('en-US').format(item.createdAt)}</TableCell>
+                  <TableCell className="text-end">c</TableCell>
+                </TableRow>
+              ))}
+            </TableBody> */}
+            <TableBody>
+              {data.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <Image
+                      alt="Product Image"
+                      src={item.images[0]}
+                      height={64}
+                      width={64}
+                      className="rounded-md object-cover h-16 w-16"
+                    />
+                  </TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell className="max-w-[250px] truncate">{item.description}</TableCell>{' '}
                   <TableCell>{item.status}</TableCell>
                   <TableCell>${item.price}</TableCell>
                   <TableCell>{new Intl.DateTimeFormat('en-US').format(item.createdAt)}</TableCell>
                   <TableCell className="text-end">
-                   c
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/products/${item.id}`}>Edit</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/products/${item.id}/delete`}>Delete</Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
