@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 interface iAppProops {
   item: {
+    name?: string;
     description: string;
     price: number;
     images: string[];
