@@ -26,7 +26,7 @@ export function ProductCard({ item }: iAppProops) {
         <CarouselContent>
           {item.images.map((item, index) => (
             <CarouselItem key={index}>
-              <div className="relative h-[330px]">
+              <div className="relative h-[330px] ml-3">
                 <Image
                   src={item}
                   alt="product image"

@@ -24,6 +24,11 @@ export const navbarLinks = [
     name: 'Women',
     href: '/products/women',
   },
+  {
+    id: 4,
+    name: 'kids',
+    href: '/products/kids',
+  },
 ];
 
 export function NavbarLinks() {
