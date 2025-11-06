@@ -135,7 +135,7 @@ export async function addItem(productId: string) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user || user.email !== 'adnankarim725@gmail.com') {
+  if (!user) {
     return redirect('/');
   }
 
