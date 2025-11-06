@@ -4,6 +4,9 @@ import { redirect } from 'next/navigation';
 import { parseWithZod } from '@conform-to/zod';
 import { bannerSchema, productSchema } from './lib/zodSchemas';
 import prisma from './lib/db';
+import { redis } from './lib/radis';
+import { Cart } from './lib/interfaces';
+import { revalidatePath } from 'next/cache';
 
 export async function createProduct(prevState: unknown, formData: FormData) {
   const { getUser } = getKindeServerSession();
@@ -128,8 +131,7 @@ export async function createBanner(prevState: unknown, formData: FormData) {
 
   redirect('/dashboard/banner');
 }
-
-export async function deleteBanner(formData: FormData) {
+export async function addItem(productId: string) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
@@ -137,14 +139,154 @@ export async function deleteBanner(formData: FormData) {
     return redirect('/');
   }
 
-  await prisma.banner.delete({
-    where: {
-      id: formData.get('bannerId') as string,
+  // const cartData = await redis.get(`cart-${user.id}`);
+  // const cart: Cart | null = cartData ? JSON.parse(cartData) : null;
+  const cart: Cart | null = await redis.get(`cart-${user.id}`);
+
+  const selectedProduct = await prisma.product.findUnique({
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      images: true,
     },
+    where: { id: productId },
   });
 
-  redirect('/dashboard/banner');
+  if (!selectedProduct) throw new Error('Product not found');
+
+  let myCart: Cart;
+
+  if (!cart || !cart.items) {
+    myCart = {
+      userId: user.id,
+      items: [
+        {
+          id: selectedProduct.id,
+          price: selectedProduct.price,
+          quantity: '1',
+          name: selectedProduct.name,
+          imageString: selectedProduct.images[0],
+        },
+      ],
+    };
+  } else {
+    let itemFound = false;
+
+    myCart = {
+      userId: user.id,
+      items: cart.items.map((item) => {
+        if (item.id === productId) {
+          itemFound = true;
+          item.quantity = (parseInt(item.quantity) + 1).toString();
+        }
+        return item;
+      }),
+    };
+
+    if (!itemFound) {
+      myCart.items.push({
+        id: selectedProduct.id,
+        price: selectedProduct.price,
+        quantity: '1',
+        name: selectedProduct.name,
+        imageString: selectedProduct.images[0],
+      });
+    }
+  }
+
+  await redis.set(`cart-${user.id}`, JSON.stringify(myCart));
+
+  revalidatePath('/', 'layout');
 }
+
+// export async function deleteBanner(formData: FormData) {
+//   const { getUser } = getKindeServerSession();
+//   const user = await getUser();
+
+//   if (!user || user.email !== 'adnankarim725@gmail.com') {
+//     return redirect('/');
+//   }
+
+//   await prisma.banner.delete({
+//     where: {
+//       id: formData.get('bannerId') as string,
+//     },
+//   });
+
+//   redirect('/dashboard/banner');
+// }
+
+// export async function addItem(productId: string) {
+//   const { getUser } = getKindeServerSession();
+//   const user = await getUser();
+
+//   if (!user || user.email !== 'adnankarim725@gmail.com') {
+//     return redirect('/');
+//   }
+
+//   const cart: Cart | null = await redis.get(`cart-${user.id}`);
+
+//   const selectedProduct = await prisma.product.findUnique({
+//     select: {
+//       id: true,
+//       name: true,
+//       price: true,
+//       images: true,
+//     },
+//     where: {
+//       id: productId,
+//     },
+//   });
+
+//   if (!selectedProduct) {
+//     throw new Error('Product not found');
+//   }
+
+//   let myCart: Cart;
+
+//   if (!cart || !cart.items) {
+//     myCart = {
+//       userId: user.id,
+//       items: [
+//         {
+//           id: selectedProduct.id,
+//           price: selectedProduct.price,
+//           quantity: '1',
+//           name: selectedProduct.name,
+//           imageString: selectedProduct.images[0],
+//         },
+//       ],
+//     };
+//   } else {
+//     let itemFound = false;
+
+//     myCart = {
+//       userId: user.id,
+//       items: cart.items.map((item) => {
+//         if (item.id === productId) {
+//           itemFound = true;
+//           item.quantity = (parseInt(item.quantity) + 1).toString();
+//         }
+//         return item;
+//       }),
+//     };
+
+//     if (!itemFound) {
+//       myCart.items.push({
+//         id: selectedProduct.id,
+//         price: selectedProduct.price,
+//         quantity: '1',
+//         name: selectedProduct.name,
+//         imageString: selectedProduct.images[0],
+//       });
+//     }
+//   }
+
+//   // Save updated cart
+//   // await redis.set(`cart-${user.id}`, myCart);
+//   await redis.set(`cart-${user.id}`, JSON.stringify(myCart));
+// }
 
 // Conform.guide isntall and do this setups
 // 4/16/11

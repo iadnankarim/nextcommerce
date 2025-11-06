@@ -30,7 +30,7 @@ export async function FeaturedProducts() {
     <>
       <h2 className="text-2xl font-extrabold tracking-tight">Featured products</h2>
 
-      <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-4">
         {data.map((item) => (
           //   <p key={item.id}>{item.name}</p>
           <ProductCard key={item.id} item={item} />
