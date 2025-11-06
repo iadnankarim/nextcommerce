@@ -15,11 +15,20 @@ export async function Navbar() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  const cart: Cart | null = await redis.get(`cart-${user?.id}`);
-  console.log(cart);
+  let cart: Cart | null = null;
+  if (user?.id) {
+    try {
+      const cartData = await redis.get(`cart-${user.id}`);
+      if (cartData) {
+        cart = typeof cartData === 'string' ? JSON.parse(cartData) : cartData;
+      }
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      cart = null;
+    }
+  }
 
-  // const total = cart?.items.reduce((sum, item) => sum + item.quantity , 0);
-  const total = cart?.items.reduce((sum, item) => sum + Number(item.quantity), 0);
+  const total = cart?.items?.reduce((sum, item) => sum + Number(item.quantity), 0) || 0;
 
   return (
     <nav className="w-full  max-w-7xl mx-auto sm:px-6 lg:px-8 py-5 flex items-center justify-between ">

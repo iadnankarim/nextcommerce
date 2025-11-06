@@ -139,9 +139,16 @@ export async function addItem(productId: string) {
     return redirect('/');
   }
 
-  // const cartData = await redis.get(`cart-${user.id}`);
-  // const cart: Cart | null = cartData ? JSON.parse(cartData) : null;
-  const cart: Cart | null = await redis.get(`cart-${user.id}`);
+  const cartData = await redis.get(`cart-${user.id}`);
+  let cart: Cart | null = null;
+  if (cartData) {
+    try {
+      cart = typeof cartData === 'string' ? JSON.parse(cartData) : cartData;
+    } catch (error) {
+      console.error('Error parsing cart data:', error);
+      cart = null;
+    }
+  }
 
   const selectedProduct = await prisma.product.findUnique({
     select: {
@@ -154,6 +161,9 @@ export async function addItem(productId: string) {
   });
 
   if (!selectedProduct) throw new Error('Product not found');
+  if (!selectedProduct.images || selectedProduct.images.length === 0) {
+    throw new Error('Product has no images');
+  }
 
   let myCart: Cart;
 
