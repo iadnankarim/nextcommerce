@@ -163,7 +163,7 @@ export async function addItem(productId: string) {
       items: [
         {
           id: selectedProduct.id,
-          price: selectedProduct.price,
+          price: selectedProduct.price.toString(),
           quantity: '1',
           name: selectedProduct.name,
           imageString: selectedProduct.images[0],
@@ -187,7 +187,7 @@ export async function addItem(productId: string) {
     if (!itemFound) {
       myCart.items.push({
         id: selectedProduct.id,
-        price: selectedProduct.price,
+        price: selectedProduct.price.toString(),
         quantity: '1',
         name: selectedProduct.name,
         imageString: selectedProduct.images[0],
@@ -200,22 +200,22 @@ export async function addItem(productId: string) {
   revalidatePath('/', 'layout');
 }
 
-// export async function deleteBanner(formData: FormData) {
-//   const { getUser } = getKindeServerSession();
-//   const user = await getUser();
+export async function deleteBanner(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-//   if (!user || user.email !== 'adnankarim725@gmail.com') {
-//     return redirect('/');
-//   }
+  if (!user || user.email !== 'adnankarim725@gmail.com') {
+    return redirect('/');
+  }
 
-//   await prisma.banner.delete({
-//     where: {
-//       id: formData.get('bannerId') as string,
-//     },
-//   });
+  await prisma.banner.delete({
+    where: {
+      id: formData.get('bannerId') as string,
+    },
+  });
 
-//   redirect('/dashboard/banner');
-// }
+  redirect('/dashboard/banner');
+}
 
 // export async function addItem(productId: string) {
 //   const { getUser } = getKindeServerSession();
