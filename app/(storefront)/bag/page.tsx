@@ -3,11 +3,9 @@ import { redis } from '@/app/lib/radis';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { QuantitySelector } from '@/app/components/storefront/QuantitySelector';
-import { removeItem } from '@/app/actions';
+import { removeItem, createCheckoutSession } from '@/app/actions';
 import { ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 
@@ -135,95 +133,15 @@ export default async function BagRoute() {
                   </div>
                 </div>
 
-                {/* Payment Details */}
-                <div className="border-t border-gray-200 pt-6 space-y-6">
-                  <h3 className="text-lg font-bold text-gray-900">Payment Details</h3>
-
-                  {/* Card Number */}
-                  <div className="space-y-2">
-                    <Label htmlFor="cardNumber" className="text-sm font-medium text-gray-700">
-                      Card Number
-                    </Label>
-                    <Input
-                      id="cardNumber"
-                      type="text"
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* Card Holder Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="cardName" className="text-sm font-medium text-gray-700">
-                      Card Holder Name
-                    </Label>
-                    <Input id="cardName" type="text" placeholder="John Doe" className="w-full" />
-                  </div>
-
-                  {/* Expiry & CVV */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="expiry" className="text-sm font-medium text-gray-700">
-                        Expiry Date
-                      </Label>
-                      <Input
-                        id="expiry"
-                        type="text"
-                        placeholder="MM/YY"
-                        maxLength={5}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="cvv" className="text-sm font-medium text-gray-700">
-                        CVV
-                      </Label>
-                      <Input
-                        id="cvv"
-                        type="text"
-                        placeholder="123"
-                        maxLength={4}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Billing Address */}
-                  <div className="space-y-2">
-                    <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-                      Billing Address
-                    </Label>
-                    <Input id="address" type="text" placeholder="123 Main St" className="w-full" />
-                  </div>
-
-                  {/* City & Zip */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city" className="text-sm font-medium text-gray-700">
-                        City
-                      </Label>
-                      <Input id="city" type="text" placeholder="New York" className="w-full" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="zip" className="text-sm font-medium text-gray-700">
-                        ZIP Code
-                      </Label>
-                      <Input
-                        id="zip"
-                        type="text"
-                        placeholder="10001"
-                        maxLength={10}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 {/* Checkout Button */}
-                <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-6 text-base rounded-xl">
-                  Complete Order
-                </Button>
+                <form action={createCheckoutSession}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-6 text-base rounded-xl"
+                  >
+                    Complete Order
+                  </Button>
+                </form>
               </div>
             </div>
           </div>

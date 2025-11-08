@@ -7,6 +7,7 @@ import prisma from './lib/db';
 import { redis } from './lib/radis';
 import { Cart } from './lib/interfaces';
 import { revalidatePath } from 'next/cache';
+import { stripe } from './lib/stripe';
 
 export async function createProduct(prevState: unknown, formData: FormData) {
   const { getUser } = getKindeServerSession();
@@ -373,6 +374,63 @@ export async function deleteBanner(formData: FormData) {
 //   // await redis.set(`cart-${user.id}`, myCart);
 //   await redis.set(`cart-${user.id}`, JSON.stringify(myCart));
 // }
+
+// Stripe Checkout Action
+export async function createCheckoutSession() {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/');
+  }
+
+  const cartData = await redis.get(`cart-${user.id}`);
+  let cart: Cart | null = null;
+  if (cartData) {
+    try {
+      cart = typeof cartData === 'string' ? JSON.parse(cartData) : cartData;
+    } catch (error) {
+      console.error('Error parsing cart data:', error);
+      cart = null;
+    }
+  }
+
+  if (!cart || !cart.items || cart.items.length === 0) {
+    return redirect('/bag');
+  }
+
+  const lineItems = cart.items.map((item) => ({
+    price_data: {
+      currency: 'usd',
+      product_data: {
+        name: item.name,
+        images: [item.imageString],
+      },
+      unit_amount: Math.round(Number(item.price) * 100), // Convert to cents
+    },
+    quantity: Number(item.quantity),
+  }));
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: lineItems,
+    mode: 'payment',
+    success_url: `${
+      process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    }/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/payment/cancel`,
+    customer_email: user.email || undefined,
+    metadata: {
+      userId: user.id,
+    },
+  });
+
+  if (session.url) {
+    redirect(session.url);
+  } else {
+    throw new Error('Failed to create checkout session');
+  }
+}
 
 // Conform.guide isntall and do this setups
 // 4/16/11
