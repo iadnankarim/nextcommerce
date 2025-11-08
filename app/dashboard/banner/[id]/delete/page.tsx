@@ -1,4 +1,4 @@
-import { deleteBanner, deleteProduct } from '@/app/actions';
+import { deleteBanner } from '@/app/actions';
 import { SubmitButton } from '@/app/components/SubmitButtons';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
