@@ -41,13 +41,13 @@ export function ShoppingBagButton() {
   return (
     <>
       {pending ? (
-        <Button disabled>
+        <Button disabled className="w-full mt-4 lg:mt-5">
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Please wait
         </Button>
       ) : (
-        <Button type="submit">
-          <ShoppingBag className="h-5 w-5 mr-2 " /> Add to Cart
+        <Button type="submit" className="w-full mt-4 lg:mt-5">
+          <ShoppingBag className="h-5 w-5 mr-2" /> Add to Cart
         </Button>
       )}
     </>
