@@ -1,4 +1,6 @@
+import { Suspense } from 'react';
 import { FeaturedProducts } from '@/app/components/storefront/FeaturedProducts';
+import { FeaturedProductsSkeleton } from '@/app/components/storefront/FeaturedProductsSkeleton';
 import { ImageSlider } from '@/app/components/storefront/ImageSlider';
 import prisma from '@/app/lib/db';
 import { Button } from '@/components/ui/button';
@@ -66,7 +68,9 @@ export default async function ProductIdRoute({ params }: { params: Promise<{ id:
       </div>
 
       <div className="mt-8 lg:mt-16 px-4 lg:px-0">
-        <FeaturedProducts />
+        <Suspense fallback={<FeaturedProductsSkeleton />}>
+          <FeaturedProducts />
+        </Suspense>
       </div>
     </>
   );

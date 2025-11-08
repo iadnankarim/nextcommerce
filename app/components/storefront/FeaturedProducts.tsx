@@ -2,6 +2,9 @@ import prisma from '@/app/lib/db';
 import { ProductCard } from './ProductCard';
 
 async function getData() {
+  // Add a delay to see the skeleton (remove in production if not needed)
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   const data = await prisma.product.findMany({
     where: {
       status: 'published',

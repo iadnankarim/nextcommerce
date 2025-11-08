@@ -210,6 +210,82 @@ export async function addItem(productId: string) {
   revalidatePath('/', 'layout');
 }
 
+export async function updateItemQuantity(productId: string, newQuantity: number) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/');
+  }
+
+  if (newQuantity <= 0) {
+    // If quantity is 0 or less, remove the item
+    return removeItem(productId);
+  }
+
+  const cartData = await redis.get(`cart-${user.id}`);
+  let cart: Cart | null = null;
+  if (cartData) {
+    try {
+      cart = typeof cartData === 'string' ? JSON.parse(cartData) : cartData;
+    } catch (error) {
+      console.error('Error parsing cart data:', error);
+      cart = null;
+    }
+  }
+
+  if (!cart || !cart.items) {
+    return;
+  }
+
+  const myCart: Cart = {
+    userId: user.id,
+    items: cart.items.map((item) => {
+      if (item.id === productId) {
+        return { ...item, quantity: newQuantity.toString() };
+      }
+      return item;
+    }),
+  };
+
+  await redis.set(`cart-${user.id}`, JSON.stringify(myCart));
+  revalidatePath('/bag');
+  revalidatePath('/', 'layout');
+}
+
+export async function removeItem(productId: string) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/');
+  }
+
+  const cartData = await redis.get(`cart-${user.id}`);
+  let cart: Cart | null = null;
+  if (cartData) {
+    try {
+      cart = typeof cartData === 'string' ? JSON.parse(cartData) : cartData;
+    } catch (error) {
+      console.error('Error parsing cart data:', error);
+      cart = null;
+    }
+  }
+
+  if (!cart || !cart.items) {
+    return;
+  }
+
+  const myCart: Cart = {
+    userId: user.id,
+    items: cart.items.filter((item) => item.id !== productId),
+  };
+
+  await redis.set(`cart-${user.id}`, JSON.stringify(myCart));
+  revalidatePath('/bag');
+  revalidatePath('/', 'layout');
+}
+
 export async function deleteBanner(formData: FormData) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();

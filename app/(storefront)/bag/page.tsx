@@ -6,6 +6,10 @@ import { redirect } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { QuantitySelector } from '@/app/components/storefront/QuantitySelector';
+import { removeItem } from '@/app/actions';
+import { ShoppingBag } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function BagRoute() {
   const { getUser } = getKindeServerSession();
@@ -22,11 +26,30 @@ export default async function BagRoute() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       {cart?.items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Your cart is empty</h1>
-          <p className="text-gray-500 text-sm sm:text-base">
-            Add items to your cart to get started
+        // <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        //   <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+        //     You dont have any products in your cart
+        //   </h1>
+        //   <p className="text-gray-500 text-sm sm:text-base">
+        //     {/* Add items to your cart to start shopping */}
+        //     your currently dont have products in your shopping cart. Please add some so <br />
+        //     that you can see them right here
+        //   </p>
+        // </div>
+        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center mt-20">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+            <ShoppingBag className="w-10 h-10 text-primary" />
+          </div>
+
+          <h2 className="mt-6 text-xl font-semibold">You dont have any products in your Bag</h2>
+          <p className="mb-8 mt-2 text-center text-sm leading-6 text-muted-foreground max-w-sm mx-auto">
+            You currently dont have any products in your shopping bag. Please add some so that you
+            can see them right here.
           </p>
+
+          <Button asChild>
+            <Link href="/">Shop Now!</Link>
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -58,17 +81,24 @@ export default async function BagRoute() {
                           {item.name}
                         </h2>
                         <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base text-gray-600 mb-4">
-                          <span className="font-medium">Quantity: {item.quantity}</span>
-                          <span className="text-gray-400">•</span>
                           <span className="font-medium">${item.price} each</span>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-wrap">
+                          <QuantitySelector
+                            productId={item.id}
+                            initialQuantity={Number(item.quantity)}
+                          />
                           <p className="text-lg sm:text-xl font-bold text-gray-900">
                             ${(Number(item.price) * Number(item.quantity)).toFixed(2)}
                           </p>
-                          <button className="text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-200 px-3 py-1.5 rounded-md hover:bg-red-50">
-                            Remove
-                          </button>
+                          <form action={removeItem.bind(null, item.id)}>
+                            <button
+                              type="submit"
+                              className="text-red-500 hover:text-red-700 font-medium text-sm transition-colors duration-200 px-3 py-1.5 rounded-md hover:bg-red-50"
+                            >
+                              Remove
+                            </button>
+                          </form>
                         </div>
                       </div>
                     </div>
