@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { DasboardNavigation } from '../components/dashboard/DasboardNavigation';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { CircleUser, MenuIcon } from 'lucide-react';
+import { CircleUser, MenuIcon, Store } from 'lucide-react';
 // import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import {
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const { getUser } = getKindeServerSession();
@@ -42,25 +43,41 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <SheetContent side="left">
             <nav className="flex flex-col gap-5 text-lg font-base mt-5">
               <DasboardNavigation />
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-lg font-medium hover:text-purple-400 transition-colors"
+              >
+                <Store className="h-5 w-5" />
+                Back to Store
+              </Link>
             </nav>
           </SheetContent>
         </Sheet>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="rounded-full" variant="secondary" size="icon">
-              <CircleUser className="w-5 h-5" />
+        <div className="flex items-center gap-2">
+          <Link href="/" className="hidden md:block">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Store className="h-4 w-4" />
+              <span className="hidden lg:inline">Back to Store</span>
             </Button>
-          </DropdownMenuTrigger>
+          </Link>
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <LogoutLink>Logout</LogoutLink>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="rounded-full" variant="secondary" size="icon">
+                <CircleUser className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <LogoutLink>Logout</LogoutLink>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </header>
 
       <main className="my-5">{children}</main>

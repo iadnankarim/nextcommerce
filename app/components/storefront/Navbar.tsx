@@ -5,7 +5,7 @@ import {
   LoginLink,
   RegisterLink,
 } from '@kinde-oss/kinde-auth-nextjs/server';
-import { ShoppingBagIcon, Menu } from 'lucide-react';
+import { ShoppingBagIcon, Menu, LayoutDashboard } from 'lucide-react';
 import { UserDropdown } from './UserDropDown';
 import { Button } from '@/components/ui/button';
 import { redis } from '@/app/lib/radis';
@@ -105,6 +105,15 @@ export async function Navbar() {
                       <ShoppingBagIcon className="h-5 w-5" />
                       Shopping Bag ({total})
                     </Link>
+                    {user.email === 'adnankarim725@gmail.com' && (
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 text-lg font-medium hover:text-purple-400 transition-colors"
+                      >
+                        <LayoutDashboard className="h-5 w-5" />
+                        Dashboard
+                      </Link>
+                    )}
                     <UserDropdown
                       email={user.email as string}
                       name={user.given_name as string}
@@ -145,6 +154,12 @@ export async function Navbar() {
                 </span>
               )}
             </Link>
+
+            {user.email === 'adnankarim725@gmail.com' && (
+              <Link href="/dashboard" className="group p-2 flex items-center mr-2">
+                <LayoutDashboard className="h-6 w-6 text-gray-400 group-hover:text-gray-500" />
+              </Link>
+            )}
 
             <div className="hidden md:block">
               <UserDropdown
