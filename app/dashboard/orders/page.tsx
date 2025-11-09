@@ -8,8 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { unstable_noStore as noStore } from 'next/cache';
 
 async function getData() {
+  noStore();
   const data = await prisma.order.findMany({
     select: {
       createdAt: true,

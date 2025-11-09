@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DashboardStatus } from '../components/dashboard/DashboardStats';
 import { Chart } from '../components/dashboard/Chart';
 import prisma from '@/app/lib/db';
+import { unstable_noStore as noStore } from 'next/cache';
 
 async function getWeekData() {
+  noStore();
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
@@ -51,6 +53,7 @@ async function getWeekData() {
 }
 
 async function getRecentSales() {
+  noStore();
   const data = await prisma.order.findMany({
     select: {
       amount: true,
