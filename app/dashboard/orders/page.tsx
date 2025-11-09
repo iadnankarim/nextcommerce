@@ -1,3 +1,4 @@
+import prisma from '@/app/lib/db';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -8,7 +9,31 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-export default function OrdersPage() {
+async function getData() {
+  const data = await prisma.order.findMany({
+    select: {
+      createdAt: true,
+      status: true,
+      id: true,
+      amount: true,
+      user: {
+        select: {
+          firstName: true,
+          email: true,
+          profileImage: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return data;
+}
+
+export default async function OrdersPage() {
+  const data = await getData();
   return (
     <Card>
       <CardHeader className="px-7">
@@ -29,20 +54,29 @@ export default function OrdersPage() {
           </TableHeader>
 
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <p className="font-medium">Adnan</p>
-                <p className="hidden md:flex text-sm text-muted-foreground">text@gmail.com</p>
-              </TableCell>
+            {data.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>
+                  <p className="font-medium">{item.user?.firstName}</p>
+                  <p className="hidden md:flex text-sm text-muted-foreground">{item.user?.email}</p>
+                </TableCell>
 
-              <TableCell>Sales</TableCell>
+                <TableCell>Order</TableCell>
 
-              <TableCell>Success</TableCell>
+                <TableCell>{item.status}</TableCell>
 
-              <TableCell>2025-06-12</TableCell>
+                <TableCell>
+                  {new Intl.DateTimeFormat('en-US').format(item.createdAt)}
+                </TableCell>
 
-              <TableCell className="text-right">$250.00</TableCell>
-            </TableRow>
+                <TableCell className="text-right">
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  }).format(item.amount / 100)}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </CardContent>

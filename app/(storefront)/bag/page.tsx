@@ -23,7 +23,7 @@ export default async function BagRoute() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-      {cart?.items.length === 0 ? (
+      {!cart || cart.items.length === 0 ? (
         // <div className="flex flex-col items-center justify-center min-h-[60vh]">
         //   <h1 className="text-2xl sm:text-3xl font-bold mb-2">
         //     You dont have any products in your cart

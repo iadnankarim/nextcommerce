@@ -1,117 +1,126 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, PartyPopper, ShoppingBag, User2 } from 'lucide-react';
+import { DashboardStatus } from '../components/dashboard/DashboardStats';
+import { Chart } from '../components/dashboard/Chart';
+import prisma from '@/app/lib/db';
 
-export default function Dashboard() {
+async function getWeekData() {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const data = await prisma.order.findMany({
+    where: {
+      createdAt: {
+        gte: sevenDaysAgo,
+      },
+    },
+    select: {
+      createdAt: true,
+      amount: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+
+  // Create array of last 7 days
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
+    return {
+      date: date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
+      revenue: 0,
+    };
+  });
+
+  // Aggregate order data by date
+  data.forEach((order) => {
+    const date = new Date(order.createdAt).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+    const dayData = last7Days.find((item) => item.date === date);
+    if (dayData) {
+      dayData.revenue += order.amount / 100;
+    }
+  });
+
+  return last7Days;
+}
+
+async function getRecentSales() {
+  const data = await prisma.order.findMany({
+    select: {
+      amount: true,
+      id: true,
+      user: {
+        select: {
+          firstName: true,
+          email: true,
+          profileImage: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 5,
+  });
+
+  return data;
+}
+
+export default async function Dashboard() {
+  const [weekData, recentSales] = await Promise.all([getWeekData(), getRecentSales()]);
+
   return (
     <>
-      <div className="grid  md:grid-cols-2 md:gap-3 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">$100.000</p>
-            <p className="text-xs text-muted-foreground">Base on 100 charges</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Total Sales</CardTitle>
-            <ShoppingBag className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">+50</p>
-            <p className="text-xs text-muted-foreground">Total sales on shoes</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Total Products</CardTitle>
-            <PartyPopper className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">37</p>
-            <p className="text-xs text-muted-foreground">Total Products created</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Total Users</CardTitle>
-            <User2 className="h-4 w-4 text-orange-500" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">120</p>
-            <p className="text-xs text-muted-foreground">Total Users Signed Up</p>
-          </CardContent>
-        </Card>
-      </div>
-
+      <DashboardStatus />
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3 mt-10">
         <Card className="xl:col-span-2">
           <CardHeader>
             <CardTitle>Transactions</CardTitle>
-            <CardDescription>Reacents Transaction from your Store</CardDescription>
+            <CardDescription>Recent transactions from your store</CardDescription>
           </CardHeader>
+          <CardContent>
+            <Chart data={weekData} />
+          </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Recents Sales</CardTitle>
+            <CardTitle>Recent Sales</CardTitle>
           </CardHeader>
 
           <CardContent className="flex flex-col gap-8">
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden sm:flex h-9 w-9">
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
+            {recentSales.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No sales yet</p>
+            ) : (
+              recentSales.map((sale) => (
+                <div key={sale.id} className="flex items-center gap-4">
+                  <Avatar className="hidden sm:flex h-9 w-9">
+                    {sale.user?.profileImage && <AvatarImage src={sale.user.profileImage} />}
+                    <AvatarFallback>
+                      {sale.user?.firstName?.substring(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div className="grid gap-1">
-                <p className="text-sm font-medium">Adnan</p>
-                <p className="text-sm text-muted-foreground">test@gmail.com</p>
-              </div>
-              <p className="ml-auto font-medium">+1,999.00</p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden sm:flex h-9 w-9">
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-
-              <div className="grid gap-1">
-                <p className="text-sm font-medium">Adnan</p>
-                <p className="text-sm text-muted-foreground">test@gmail.com</p>
-              </div>
-              <p className="ml-auto font-medium">+1,999.00</p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden sm:flex h-9 w-9">
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-
-              <div className="grid gap-1">
-                <p className="text-sm font-medium">Adnan</p>
-                <p className="text-sm text-muted-foreground">test@gmail.com</p>
-              </div>
-              <p className="ml-auto font-medium">+1,999.00</p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden sm:flex h-9 w-9">
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-
-              <div className="grid gap-1">
-                <p className="text-sm font-medium">Adnan</p>
-                <p className="text-sm text-muted-foreground">test@gmail.com</p>
-              </div>
-              <p className="ml-auto font-medium">+1,999.00</p>
-            </div>
+                  <div className="grid gap-1">
+                    <p className="text-sm font-medium">{sale.user?.firstName || 'Unknown'}</p>
+                    <p className="text-sm text-muted-foreground">{sale.user?.email || 'N/A'}</p>
+                  </div>
+                  <p className="ml-auto font-medium">
+                    +
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    }).format(sale.amount / 100)}
+                  </p>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
