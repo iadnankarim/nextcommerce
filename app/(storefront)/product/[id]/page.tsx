@@ -36,36 +36,36 @@ export default async function ProductIdRoute({ params }: { params: Promise<{ id:
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-start py-4 px-4 sm:px-6 lg:px-0 lg:py-6 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start py-6 px-4 sm:px-6 lg:px-8 lg:py-8 max-w-7xl mx-auto">
         {/* LEFT SIDE - IMAGE SLIDER */}
-        <div className="flex justify-center lg:justify-start w-full">
+        <div className="w-full">
           <ImageSlider images={data.images} />
         </div>
 
         {/* RIGHT SIDE - PRODUCT DETAILS */}
-        <div className="space-y-3 lg:space-y-4 px-2 sm:px-0">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold">{data.name}</h1>
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold">${data.price}</p>
+        <div className="space-y-4 lg:space-y-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{data.name}</h1>
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600">${data.price}</p>
 
-          <div className="mt-2 lg:mt-3 flex items-center gap-1">
-            <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-300 fill-yellow-300" />
-            <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-300 fill-yellow-300" />
-            <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-300 fill-yellow-300" />
-            <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-300 fill-yellow-300" />
-            <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-300 fill-yellow-300" />
+          <div className="flex items-center gap-1">
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 fill-yellow-400" />
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 fill-yellow-400" />
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 fill-yellow-400" />
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 fill-yellow-400" />
+            <StarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 fill-yellow-400" />
           </div>
 
-          <p className="text-gray-600 text-sm sm:text-base lg:text-base leading-relaxed">
+          <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
             {data.description}
           </p>
 
-          <form action={addProducttoShoppingCart} className="w-full">
+          <form action={addProducttoShoppingCart} className="w-full pt-4">
             <ShoppingBagButton />
           </form>
         </div>
       </div>
 
-      <div className="mt-8 lg:mt-16 px-4 sm:px-6 lg:px-0 max-w-7xl mx-auto">
+      <div className="mt-12 lg:mt-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <Suspense fallback={<FeaturedProductsSkeleton />}>
           <FeaturedProducts />
         </Suspense>
