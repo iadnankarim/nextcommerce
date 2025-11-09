@@ -29,10 +29,10 @@ export async function GET() {
     });
   }
 
-  //   return NextResponse.redirect(
-  //     process.env.NODE_ENV === 'development'
-  //       ? 'http://localhost:3000/'
-  //       : 'https://shoe-marshal.vercel.app/'
-  //   );
-  return NextResponse.redirect('http://localhost:3000/');
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
+      : 'https://nextcommerce-gray.vercel.app');
+
+  return NextResponse.redirect(baseUrl);
 }
